@@ -40,7 +40,6 @@ public class ClienteService {
         if(clienteRepository.findByCpf(dto.getCpf()).isEmpty() && dto.getCpf().length() == 11) {
 
             Cliente cliente = new Cliente();
-            cliente.setId(dto.getIdCliente());
             cliente.setNome(dto.getNome());
             cliente.setSobrenome(dto.getSobrenome());
             cliente.setEmail(dto.getEmail());
@@ -58,5 +57,29 @@ public class ClienteService {
     public void deletarClienteById(Integer id) {
         clienteRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ID Cliente não localizado"));
         clienteRepository.deleteById(id);
+    }
+
+    public void atualizarClienteById(Integer id, ClienteDTO dto) {
+        clienteRepository.findById(id).map(c -> {
+            if(dto.getEmail() == null) {
+                c.getEmail();
+            } else {
+                c.setEmail(dto.getEmail());
+            }
+            if(dto.getSituacao() == null) {
+                c.getSituacao();
+            } else {
+                c.setSituacao(dto.getSituacao());
+            }
+            if(dto.getSaldo() == null) {
+                c.getSaldo();
+            } else {
+                c.setSaldo(dto.getSaldo());
+            }
+
+            clienteRepository.save(c);
+            return Void.TYPE;
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não localizado."));
+        
     }
 }
